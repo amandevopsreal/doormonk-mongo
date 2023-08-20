@@ -9,7 +9,7 @@ const fetchUser = require("../middleware/fetchUser.js")
 const JWT_SECRET = "Amanisagoodbo$y"
 
 // ROUTE 1: Create a Barber using:POST "/api/auth/createbarber". No login required
-router.post("/createbarber", [body('email', "Enter a valid email").isEmail(), body('salonname', "Enter a valid name").isLength({ min: 3 }), body('password', "Password must be atleast 5 characters").isLength({ min: 5 }), body('zip').custom((value, { req }) => {
+router.post("/createbarber", [body('email', "Enter a valid email").isEmail(), body('name', "Enter a valid name").isLength({ min: 3 }), body('password', "Password must be atleast 5 characters").isLength({ min: 5 }), body('zip').custom((value, { req }) => {
     var a = /(^\d{6}$)/;
     if (a.test(value)) {
         return true

@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 
 const BarberSchema = new Schema({
-    salonname: {
+    name: {
         type: String,
         required: true
     },

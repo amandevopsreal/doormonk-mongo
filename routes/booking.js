@@ -35,4 +35,51 @@ router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time"
     }
 
 })
+
+// ROUTE 3: Update an existing appointment:PUT "/api/shops/updateassignment". Login required
+router.put("/updateappointment/:id", fetchUser, async (req, res) => {
+    try {
+        const { time } = req.body
+        const newAppointment = {}
+        if (time) {
+            newAppointment.time = time
+        }
+        let appointment = await Appointment.findById(req.params.id)
+        if (!appointment) {
+            return res.status(404).send("Not found")
+        }
+        if (appointment.user.toString() !== req.user.id) {
+            res.status(401).send("Not allowed")
+        }
+        appointment = await Appointment.findByIdAndUpdate(req.params.id, { $set: newAppointment }, { new: true })
+        res.json({ appointment })
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+
+})
+
+// ROUTE 4: Delete an existing appointment:DELETE "/api/shops/deleteappointment". Login required
+router.delete("/deleteappointment/:id", fetchUser, async (req, res) => {
+    try {
+        let appointment = await Appointment.findById(req.params.id)
+        if (!appointment) {
+            return res.status(404).send("Not found")
+        }
+        if (appointment.user.toString() !== req.user.id) {
+            res.status(401).send("Not allowed")
+        }
+        appointment = await Appointment.findByIdAndDelete(req.params.id)
+        res.json({ success: "Appointment has been deleted", appointment: appointment })
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+
+
+})
+
 module.exports = router;

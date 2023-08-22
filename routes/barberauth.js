@@ -8,7 +8,7 @@ var jwt = require('jsonwebtoken');
 const fetchUser = require("../middleware/fetchUser.js")
 const JWT_SECRET = "Amanisagoodbo$y"
 
-// ROUTE 1: Create a Barber using:POST "/api/auth/createbarber". No login required
+// ROUTE 1: Create a Barber using:POST "/api/barberauth/createbarber". No login required
 router.post("/createbarber", [body('email', "Enter a valid email").isEmail(), body('name', "Enter a valid name").isLength({ min: 3 }), body('password', "Password must be atleast 5 characters").isLength({ min: 5 }), body('zip').custom((value, { req }) => {
     var a = /(^\d{6}$)/;
     if (a.test(value)) {
@@ -58,7 +58,7 @@ router.post("/createbarber", [body('email', "Enter a valid email").isEmail(), bo
     }
 })
 
-// ROUTE 2: Authenticate a Barber using:POST "/api/auth/loginbarber". Login required
+// ROUTE 2: Authenticate a Barber using:POST "/api/barberauth/loginbarber". Login required
 router.post("/loginbarber", [body('email', "Enter a valid email").isEmail(), body('password', "Password cannot be blank").exists()
 ], async (req, res) => {
     //If there are errors, return Bad request and the errors

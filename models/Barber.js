@@ -17,7 +17,7 @@ const BarberSchema = new Schema({
         default: "Not available"
     },
     services: {
-        type: [String],
+        type: String,
         required: true
     },
     type: {
@@ -55,11 +55,11 @@ const BarberSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    workingHours: {
+    workinghours: {
         type: String,
         required: true
     },
-    shopNumber: {
+    shopnumber: {
         type: Number,
         unique: true,
         required: true

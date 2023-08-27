@@ -5,7 +5,7 @@ const fetchUser = require("../middleware/fetchUser.js")
 const Barber = require("../models/Barber")
 const Appointment = require("../models/Appointments.js");
 // ROUTE 1: Get All the Shops City wise using:GET "/api/shops/fetchallshops". Login required
-router.get("/fetchallshops", fetchUser, async (req, res) => {
+router.post("/fetchallshops", fetchUser, async (req, res) => {
     try {
         const shop = await Barber.find({ city: req.body.city }).select(["name", "phone", "website", "services", "type", "email", "address", "city", "state", "zip", "workingHours"])
         res.json(shop)

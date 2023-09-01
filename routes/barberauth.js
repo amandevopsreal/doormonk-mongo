@@ -36,15 +36,14 @@ router.post("/createbarber", [body('email', "Enter a valid email").isEmail(), bo
         secPass = await bcrypt.hash(req.body.password, salt)
         req.body.password = secPass
         await BarberCounter.updateOne(
-            { _id: '64da8a14b6beeb6bb0e86138' },
+            { _id: '64e665e9a70ad4163322e4e9' },
             {
                 $inc: { value: 1 },
                 $currentDate: { lastModified: true }
             }
         );
-        let counter = await BarberCounter.findById("64da8a14b6beeb6bb0e86138")
+        let counter = await BarberCounter.findById("64e665e9a70ad4163322e4e9")
         const barberObj = { ...req.body, shopnumber: counter.value }
-        console.log(barberObj)
         barber = await Barber.create(barberObj)
         const data = {
             id: barber.id

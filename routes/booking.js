@@ -17,14 +17,14 @@ router.post("/fetchallshops", fetchUser, async (req, res) => {
 })
 // ROUTE 2: Add an appointment:POST "/api/shops/addappointment". Login required
 router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time").isLength({ min: 3 })], async (req, res) => {
-    const { time } = req.body
+    const { name, phone, services, email, address, time } = req.body
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ success, errors: errors.array() });
+        return res.status(400).json({ errors: errors.array() });
     }
     try {
         const appointment = await Appointment.create({
-            user: req.user.id, barber: req.params.id, time
+            user: req.user.id, barber: req.params.id, name, phone, services, email, address, time
         })
         res.json(appointment)
     }

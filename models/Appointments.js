@@ -10,6 +10,26 @@ const AppointmentsSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "barber"
     },
+    name: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    services: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
     time: {
         type: String,
         required: true

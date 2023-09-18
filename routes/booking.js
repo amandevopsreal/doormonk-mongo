@@ -15,7 +15,20 @@ router.post("/fetchallshops", fetchUser, async (req, res) => {
         res.status(500).send("Internal server error")
     }
 })
-// ROUTE 2: Add an appointment:POST "/api/shops/addappointment". Login required
+
+// ROUTE 2 : Get All the Appointments User wise using:GET "/api/shops/fetchallappointments". Login required
+router.get("/fetchallappointments", fetchUser, async (req, res) => {
+    try {
+        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "phone", "services", "email", "address", "time"])
+        res.json(appointments)
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+})
+
+// ROUTE 3: Add an appointment:POST "/api/shops/addappointment". Login required
 router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time").isLength({ min: 3 })], async (req, res) => {
     const { name, phone, services, email, address, time } = req.body
     const errors = validationResult(req);
@@ -36,7 +49,7 @@ router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time"
 
 })
 
-// ROUTE 3: Update an existing appointment:PUT "/api/shops/updateassignment". Login required
+// ROUTE 4: Update an existing appointment:PUT "/api/shops/updateassignment". Login required
 router.put("/updateappointment/:id", fetchUser, async (req, res) => {
     try {
         const { time } = req.body
@@ -61,7 +74,7 @@ router.put("/updateappointment/:id", fetchUser, async (req, res) => {
 
 })
 
-// ROUTE 4: Delete an existing appointment:DELETE "/api/shops/deleteappointment". Login required
+// ROUTE 5: Delete an existing appointment:DELETE "/api/shops/deleteappointment". Login required
 router.delete("/deleteappointment/:id", fetchUser, async (req, res) => {
     try {
         let appointment = await Appointment.findById(req.params.id)

@@ -8,6 +8,11 @@ const BarberSchema = new Schema({
         type: String,
         required: true
     },
+    ratings: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     phone: {
         type: String,
         required: true
@@ -17,7 +22,8 @@ const BarberSchema = new Schema({
         default: "Not available"
     },
     services: {
-        type: String,
+        type: Array,
+        default: [],
         required: true
     },
     type: {
@@ -61,8 +67,18 @@ const BarberSchema = new Schema({
     },
     shopnumber: {
         type: Number,
-        unique: true,
+        default: 0,
         required: true
+    },
+    bookingcounter: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    workingdays: {
+        type: Array,
+        required: true,
+        default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     }
 
 })

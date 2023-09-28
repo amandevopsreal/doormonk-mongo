@@ -19,7 +19,8 @@ const AppointmentsSchema = new Schema({
         required: true
     },
     services: {
-        type: String,
+        type: Array,
+        default: ["Cutting"],
         required: true
     },
     email: {
@@ -33,6 +34,43 @@ const AppointmentsSchema = new Schema({
     time: {
         type: String,
         required: true
+    },
+    bookingid: {
+        type: Number,
+        required: true,
+    },
+    date: {
+        type: String,
+        required: true
+    },
+    barbername: {
+        type: String,
+        required: true
+    },
+    barberphone: {
+        type: String,
+        required: true
+    },
+    barberwebsite: {
+        type: String,
+        default: "Not available"
+    },
+    barberemail: {
+        type: String,
+        required: true,
+    },
+    barberaddress: {
+        type: String,
+        required: true
+    },
+    servicetype: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: String,
+        require: true,
+        default: "Pending"
     }
 
 })

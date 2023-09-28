@@ -26,7 +26,7 @@ router.post("/fetchallshops", fetchUser, async (req, res) => {
 // ROUTE 2 : Get All the Appointments User wise using:GET "/api/shops/fetchallappointments". Login required
 router.get("/fetchallappointments", fetchUser, async (req, res) => {
     try {
-        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "phone", "services", "email", "address", "time"])
+        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status"])
         res.json(appointments)
     }
     catch (error) {
@@ -37,14 +37,23 @@ router.get("/fetchallappointments", fetchUser, async (req, res) => {
 
 // ROUTE 3: Add an appointment:POST "/api/shops/addappointment". Login required
 router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time").isLength({ min: 3 })], async (req, res) => {
-    const { name, phone, services, email, address, time } = req.body
+    const { name, phone, services, email, address, time, date, servicetype } = req.body
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
     try {
+        await Barber.updateOne(
+            { _id: req.params.id },
+            {
+                $inc: { bookingcounter: 1 },
+                $currentDate: { lastModified: true }
+            }
+        );
+        const barber = await Barber.findById(req.params.id)
+
         const appointment = await Appointment.create({
-            user: req.user.id, barber: req.params.id, name, phone, services, email, address, time
+            bookingid: barber.bookingcounter, user: req.user.id, barber: req.params.id, name, phone, services, email, address, time, date, barbername: barber.name, barberphone: barber.phone, barberwebsite: barber.website, barberemail: barber.email, barberaddress: barber.address, servicetype
         })
         res.json(appointment)
     }
@@ -82,7 +91,7 @@ router.put("/updateappointment/:id", fetchUser, async (req, res) => {
 })
 
 // ROUTE 5: Delete an existing appointment:DELETE "/api/shops/deleteappointment". Login required
-router.delete("/deleteappointment/:id", fetchUser, async (req, res) => {
+router.put("/deleteappointment/:id", fetchUser, async (req, res) => {
     try {
         let appointment = await Appointment.findById(req.params.id)
         if (!appointment) {
@@ -91,8 +100,8 @@ router.delete("/deleteappointment/:id", fetchUser, async (req, res) => {
         if (appointment.user.toString() !== req.user.id) {
             res.status(401).send("Not allowed")
         }
-        appointment = await Appointment.findByIdAndDelete(req.params.id)
-        res.json({ success: "Appointment has been deleted", appointment: appointment })
+        appointment = await Appointment.findByIdAndUpdate(req.params.id, { status: 'Canceled' }, { new: true })
+        res.json({ success: "Appointment has been canceled", appointment: appointment })
     }
     catch (error) {
         console.error(error.message)

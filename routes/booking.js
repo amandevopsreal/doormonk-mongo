@@ -26,7 +26,7 @@ router.post("/fetchallshops", fetchUser, async (req, res) => {
 // ROUTE 2 : Get All the Appointments User wise using:GET "/api/shops/fetchallappointments". Login required
 router.get("/fetchallappointments", fetchUser, async (req, res) => {
     try {
-        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status"])
+        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"])
         res.json(appointments)
     }
     catch (error) {
@@ -68,10 +68,13 @@ router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time"
 // ROUTE 4: Update an existing appointment:PUT "/api/shops/updateassignment". Login required
 router.put("/updateappointment/:id", fetchUser, async (req, res) => {
     try {
-        const { time } = req.body
+        const { time, date, services } = req.body
         const newAppointment = {}
         if (time) {
             newAppointment.time = time
+        }
+        if (date) {
+            newAppointment.date = date
         }
         let appointment = await Appointment.findById(req.params.id)
         if (!appointment) {

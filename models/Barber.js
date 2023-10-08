@@ -61,7 +61,11 @@ const BarberSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    workinghours: {
+    workinghoursfrom: {
+        type: String,
+        required: true
+    },
+    workinghoursto: {
         type: String,
         required: true
     },

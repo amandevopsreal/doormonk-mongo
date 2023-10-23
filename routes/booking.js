@@ -114,4 +114,16 @@ router.put("/deleteappointment/:id", fetchUser, async (req, res) => {
 
 })
 
+// ROUTE 6: Get the Shop Prices using:POST "/api/shops/fetchprices". Login required
+router.post("/fetchprices", fetchUser, async (req, res) => {
+    try {
+        const shop = await Barber.find({ _id: req.body.id }).select("services")
+        res.json(shop)
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+})
+
 module.exports = router;

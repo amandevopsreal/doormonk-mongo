@@ -20,7 +20,7 @@ const AppointmentsSchema = new Schema({
     },
     services: {
         type: Array,
-        default: ["Cutting"],
+        default: [],
         required: true
     },
     email: {
@@ -71,6 +71,9 @@ const AppointmentsSchema = new Schema({
         type: String,
         require: true,
         default: "Pending"
+    },
+    total: {
+        type: String,
     }
 
 })

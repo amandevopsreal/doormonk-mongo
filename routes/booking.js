@@ -53,7 +53,7 @@ router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time"
         const barber = await Barber.findById(req.params.id)
 
         const appointment = await Appointment.create({
-            bookingid: barber.bookingcounter, user: req.user.id, barber: req.params.id, name, phone, services, email, address, time, date, barbername: barber.name, barberphone: barber.phone, barberwebsite: barber.website, barberemail: barber.email, barberaddress: barber.address, servicetype
+            bookingid: barber.bookingcounter, user: req.user.id, barber: req.params.id, name, phone, services, email, address, time, date, barbername: barber.name, barberphone: barber.phone, barberwebsite: barber.website, barberemail: barber.email, barberaddress: barber.address, servicetype, services: req.body.added, total: req.body.total
         })
         res.json(appointment)
     }

@@ -79,10 +79,20 @@ const BarberSchema = new Schema({
         required: true,
         default: 0
     },
+    reviewcounter: {
+        type: Number,
+        required: true,
+        default: 1
+    },
     workingdays: {
         type: Array,
         required: true,
         default: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    },
+    reviews: {
+        type: Array,
+        required: true,
+        default: []
     }
 
 })

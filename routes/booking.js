@@ -4,7 +4,9 @@ const { body, validationResult } = require('express-validator');
 const fetchUser = require("../middleware/fetchUser.js")
 const Barber = require("../models/Barber")
 const Appointment = require("../models/Appointments.js");
-// ROUTE 1: Get All the Shops City wise using:GET "/api/shops/fetchallshops". Login required
+const User = require("../models/User")
+
+// ROUTE 1: Get All the Shops City wise using:POST "/api/shops/fetchallshops". Login required
 router.post("/fetchallshops", fetchUser, async (req, res) => {
     try {
         const shops = await Barber.find({ city: req.body.city }).select(["name", "phone", "website", "services", "type", "email", "address", "city", "state", "zip", "workingHours", "workingdays"])
@@ -65,7 +67,7 @@ router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time"
 
 })
 
-// ROUTE 4: Update an existing appointment:PUT "/api/shops/updateassignment". Login required
+// ROUTE 4: Update an existing appointment:PUT "/api/shops/updateappointment". Login required
 router.put("/updateappointment/:id", fetchUser, async (req, res) => {
     try {
         const { time, date, services } = req.body
@@ -119,6 +121,32 @@ router.post("/fetchprices", fetchUser, async (req, res) => {
     try {
         const shop = await Barber.find({ _id: req.body.id }).select("services")
         res.json(shop)
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+})
+
+// ROUTE 6: Give review and ratings to the shop using:POST "/api/shops/postreview". Login required
+router.put("/postreview", fetchUser, [body('reviews', "Enter a valid review").isLength({ min: 3 }), body('ratings', "Enter a valid rating").isLength({ min: 1 })], async (req, res) => {
+    const { reviews, ratings, id } = req.body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+        const user = await User.findOne({ _id: req.user.id })
+        let barber = await Barber.findOne({ _id: id })
+        const revobj = {
+            name: user.name,
+            rating: ratings,
+            review: reviews
+        }
+        const rev = [...barber.reviews]
+        rev.push(revobj)
+        barber = await Barber.findByIdAndUpdate(id, { reviews: rev, ratings: (parseInt(ratings, 10) + ((barber.reviewcounter - 1) * barber.ratings)) / barber.reviewcounter, reviewcounter: barber.reviewcounter + 1 }, { new: true })
+        res.json(barber)
     }
     catch (error) {
         console.error(error.message)

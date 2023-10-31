@@ -28,7 +28,7 @@ router.post("/fetchallshops", fetchUser, async (req, res) => {
 // ROUTE 2 : Get All the Appointments User wise using:GET "/api/shops/fetchallappointments". Login required
 router.get("/fetchallappointments", fetchUser, async (req, res) => {
     try {
-        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"])
+        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"])
         res.json(appointments)
     }
     catch (error) {
@@ -131,6 +131,7 @@ router.post("/fetchprices", fetchUser, async (req, res) => {
 // ROUTE 6: Give review and ratings to the shop using:POST "/api/shops/postreview". Login required
 router.put("/postreview", fetchUser, [body('reviews', "Enter a valid review").isLength({ min: 3 }), body('ratings', "Enter a valid rating").isLength({ min: 1 })], async (req, res) => {
     const { reviews, ratings, id } = req.body
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -143,8 +144,16 @@ router.put("/postreview", fetchUser, [body('reviews', "Enter a valid review").is
             rating: ratings,
             review: reviews
         }
+        console.log(barber.reviews)
         const rev = [...barber.reviews]
+
         rev.push(revobj)
+
+
+
+
+
+
         barber = await Barber.findByIdAndUpdate(id, { reviews: rev, ratings: (parseInt(ratings, 10) + ((barber.reviewcounter - 1) * barber.ratings)) / barber.reviewcounter, reviewcounter: barber.reviewcounter + 1 }, { new: true })
         res.json(barber)
     }

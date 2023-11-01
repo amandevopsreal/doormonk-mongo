@@ -28,7 +28,7 @@ router.post("/fetchallshops", fetchUser, async (req, res) => {
 // ROUTE 2 : Get All the Appointments User wise using:GET "/api/shops/fetchallappointments". Login required
 router.get("/fetchallappointments", fetchUser, async (req, res) => {
     try {
-        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"])
+        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"]).sort({ date: -1 })
         res.json(appointments)
     }
     catch (error) {

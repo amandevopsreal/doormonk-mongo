@@ -5,6 +5,14 @@ const fetchUser = require("../middleware/fetchUser.js")
 const Barber = require("../models/Barber")
 const Appointment = require("../models/Appointments.js");
 const User = require("../models/User")
+const twilio = require('twilio');
+require('dotenv').config();
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+const client = new twilio(accountSid, authToken);
+
 
 // ROUTE 1: Get All the Shops City wise using:POST "/api/shops/fetchallshops". Login required
 router.post("/fetchallshops", fetchUser, async (req, res) => {
@@ -57,7 +65,24 @@ router.post("/addappointment/:id", fetchUser, [body('time', "Enter a valid time"
         const appointment = await Appointment.create({
             bookingid: barber.bookingcounter, user: req.user.id, barber: req.params.id, name, phone, services, email, address, time, date, barbername: barber.name, barberphone: barber.phone, barberwebsite: barber.website, barberemail: barber.email, barberaddress: barber.address, servicetype, services: req.body.added, total: req.body.total
         })
+
         res.json(appointment)
+        const sendSMS = async (body) => {
+            let msgOptions = {
+                from: "+12512377382",
+                to: "+918840542151",
+                body
+            }
+            try {
+                const message = await client.messages.create(msgOptions)
+                console.log(message)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        sendSMS("Hi")
+
+
     }
     catch (error) {
 

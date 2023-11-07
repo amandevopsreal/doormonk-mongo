@@ -153,7 +153,7 @@ router.post("/fetchprices", fetchUser, async (req, res) => {
     }
 })
 
-// ROUTE 6: Give review and ratings to the shop using:POST "/api/shops/postreview". Login required
+// ROUTE 7: Give review and ratings to the shop using:POST "/api/shops/postreview". Login required
 router.put("/postreview", fetchUser, [body('reviews', "Enter a valid review").isLength({ min: 3 }), body('ratings', "Enter a valid rating").isLength({ min: 1 })], async (req, res) => {
     const { reviews, ratings, id } = req.body
 
@@ -181,6 +181,18 @@ router.put("/postreview", fetchUser, [body('reviews', "Enter a valid review").is
 
         barber = await Barber.findByIdAndUpdate(id, { reviews: rev, ratings: (parseInt(ratings, 10) + ((barber.reviewcounter - 1) * barber.ratings)) / barber.reviewcounter, reviewcounter: barber.reviewcounter + 1 }, { new: true })
         res.json(barber)
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+})
+
+// ROUTE 8: Get Appointment by bookingid  using:POST "/api/shops/appointmentbyid". Login required
+router.post("/appointmentbyid", fetchUser, async (req, res) => {
+    try {
+        const appointment = await Appointment.find({ barber: req.user.id, bookingid: req.body.bookingid }).select(["name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"]).sort({ date: -1 })
+        res.json(appointment)
     }
     catch (error) {
         console.error(error.message)

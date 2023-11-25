@@ -3,8 +3,12 @@ const mongoURI = "mongodb+srv://Doormonk:Tleklu0wPvqOjuSG@doormonk.ajlmam6.mongo
 // const mongoURI = "mongodb://0.0.0.0:27017/doormonk";
 
 const connectToMongo = () => {
-    mongoose.connect(mongoURI)
-        .then(console.log("Connected To Mongo Successfully"));
+    mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 10000 })
+    .then(console.log("Connected To Mongo Successfully"));
+    // mongoose.connect(mongoURI)
 }
+
+
+
 
 module.exports = connectToMongo;

@@ -17,7 +17,7 @@ const client = new twilio(accountSid, authToken);
 // ROUTE 1: Get All the Shops City wise using:POST "/api/shops/fetchallshops". Login required
 router.post("/fetchallshops", fetchUser, async (req, res) => {
     try {
-        const shops = await Barber.find({ city: req.body.city }).select(["name", "phone", "website", "services", "type", "email", "address", "city", "state", "zip", "workingHours", "workingdays"])
+        const shops = await Barber.find({ city: req.body.city }).select(["ratings","name", "phone", "website", "services", "type", "email", "address", "city", "state", "zip", "workinghoursfrom","workinghoursto", "workingdays"])
         if (req.body.date.length > 0) {
             const shopsbyday = shops.filter((shop) => {
                 return shop.workingdays.includes(req.body.date)
@@ -36,7 +36,7 @@ router.post("/fetchallshops", fetchUser, async (req, res) => {
 // ROUTE 2 : Get All the Appointments User wise using:GET "/api/shops/fetchallappointments". Login required
 router.get("/fetchallappointments", fetchUser, async (req, res) => {
     try {
-        const appointments = await Appointment.find({ user: req.user.id }).select(["name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"]).sort({ date: -1 })
+        const appointments = await Appointment.find({ user: req.user.id }).select(["shopconfirmation","total","name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"]).sort({ date: -1 })
         res.json(appointments)
     }
     catch (error) {
@@ -191,8 +191,33 @@ router.put("/postreview", fetchUser, [body('reviews', "Enter a valid review").is
 // ROUTE 8: Get Appointment by bookingid  using:POST "/api/shops/appointmentbyid". Login required
 router.post("/appointmentbyid", fetchUser, async (req, res) => {
     try {
-        const appointment = await Appointment.find({ barber: req.user.id, bookingid: req.body.bookingid }).select(["name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"]).sort({ date: -1 })
+        const appointment = await Appointment.find({ barber: req.user.id, bookingid: req.body.bookingid }).select(["total","name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"]).sort({ date: -1 })
         res.json(appointment)
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+})
+
+// ROUTE 9: Set Appointment Completed:PUT "/api/shops/completed". Login required
+router.put("/completed", fetchUser, async (req, res) => {
+    try {
+        const {id,status}=req.body
+        const appointment = await Appointment.findByIdAndUpdate(id,{status:status})
+        res.json(appointment)
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+})
+
+// ROUTE 10: Get All the Appointmnets day wise using:POST "/api/shops/fetchappbyday". Login required
+router.post("/fetchappbyday", fetchUser, async (req, res) => {
+    try {
+        const appointments = await Appointment.find({barber:req.user.id,date:req.body.date}).select(["total","name", "barber", "phone", "services", "email", "address", "time", "barbername", "barberphone", "barberwebsite", "barberemail", "barberaddress", "servicetype", "bookingid", "status", "date"]).sort({ date: -1 })
+        res.json(appointments)
     }
     catch (error) {
         console.error(error.message)

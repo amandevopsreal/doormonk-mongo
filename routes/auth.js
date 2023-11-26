@@ -89,4 +89,33 @@ router.post('/getUser', fetchUser, async (req, res) => {
     }
 })
 
+// ROUTE 4: Update a User using:PUT "/api/auth/updateuser". Login required
+router.put("/updateuser", fetchUser, async (req, res) => {
+    try {
+        const { name, email } = req.body
+        const newUser = {}
+        if (name) {
+            newUser.name = name
+        }
+        if (email) {
+            newUser.email = email
+        }
+
+        let user = await User.findById(req.user.id)
+        if (!user) {
+            return res.status(404).send("Not found")
+        }
+        if (user._id.toString() !== req.user.id) {
+            res.status(401).send("Not allowed")
+        }
+        user = await User.findByIdAndUpdate(req.user.id, { $set: newUser }, { new: true })
+        res.json({ user })
+    }
+    catch (error) {
+        console.error(error.message)
+        res.status(500).send("Internal server error")
+    }
+
+})
+
 module.exports = router

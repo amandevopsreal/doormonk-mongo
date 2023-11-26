@@ -74,6 +74,11 @@ const AppointmentsSchema = new Schema({
     },
     total: {
         type: String,
+    },
+    shopconfirmation:{
+        type:String,
+        required:true,
+        default:"Waiting for confirmation"
     }
 
 })

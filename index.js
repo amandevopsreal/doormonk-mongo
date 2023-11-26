@@ -9,11 +9,11 @@ const port = 5000;
 app.use(express.json())
 app.use(cors());
 
+
 //Available routes
 app.use("/api/auth", require('./routes/auth'))
 app.use("/api/barberauth", require('./routes/barberauth'))
 app.use("/api/shops", require('./routes/booking'))
-app.use("/api/notes", require('./routes/notes'))
 
 app.listen(port, () => {
     console.log(`App is running on port ${port}`)
